@@ -1,10 +1,5 @@
 package geom
 
-// CurlZ returns the z coordinate of the curl of two vectors in the 2D plane.
-func CurlZ(p1x, p1y, p2x, p2y, p3x, p3y float64) float64 {
-	return (p1x-p3x)*(p2y-p3y) - (p2x-p3x)*(p1y-p3y)
-}
-
 // Det2 returns the determinant of a 2x2 matrix.
 func Det2(a, b, c, d float64) float64 {
 	return a*d - b*c

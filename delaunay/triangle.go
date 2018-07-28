@@ -44,9 +44,9 @@ func (t *Triangle) Contains(p *Point) (bool, error) {
 	// Test that the line between every vertex and the given point is clockwise
 	// from the line from said vertex to the next vertex in the triangle.
 	// (Assumes triangle defined in clockwise order).
-	return geom.CurlZ(p.X, p.Y, t1.X, t1.Y, t2.X, t2.Y) <= 0 &&
-		geom.CurlZ(p.X, p.Y, t2.X, t2.Y, t3.X, t3.Y) <= 0 &&
-		geom.CurlZ(p.X, p.Y, t3.X, t3.Y, t1.X, t1.Y) <= 0, nil
+	return geom.Det2(t1.X-p.X, t1.Y-p.Y, t2.X-p.X, t2.Y-p.Y) <= 0 &&
+		geom.Det2(t2.X-p.X, t2.Y-p.Y, t3.X-p.X, t3.Y-p.Y) <= 0 &&
+		geom.Det2(t3.X-p.X, t3.Y-p.Y, t1.X-p.X, t1.Y-p.Y) <= 0, nil
 }
 
 // GetCircumcenter returns the coordinates of the circumcenter of this triangle.
