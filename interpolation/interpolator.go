@@ -32,6 +32,7 @@ func (i *Interpolator) Interpolate(x, y float64) (float64, error) {
 	for i, n := range neighbours {
 		areasAfter[i] = voronoi.NewRegion(n).GetArea()
 	}
+	totalArea := voronoi.NewRegion(p).GetArea()
 	undo()
 	// Calculate the area of the same points without the new point in the triangulation.
 	areasBefore := make([]float64, len(neighbours))
@@ -41,10 +42,8 @@ func (i *Interpolator) Interpolate(x, y float64) (float64, error) {
 	// Take a weighted average of the values of the points the new test point was connected to.
 	// Weighting is the percentage of the test point's voronoi cell that was stolen from each neighbour point.
 	total := 0.0
-	divisor := 0.0
 	for i, n := range neighbours {
 		total += n.Value * (areasBefore[i] - areasAfter[i])
-		divisor += areasBefore[i] - areasAfter[i]
 	}
-	return total / divisor, nil
+	return total / totalArea, nil
 }

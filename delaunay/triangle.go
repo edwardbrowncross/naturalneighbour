@@ -237,7 +237,7 @@ func (t1 *Triangle) UnflipWith(t2 *Triangle) error {
 // IsDelaunayWith tests wheth the two involved triangles are locally delaunay.
 // It does this by checking whether the opposing point of one triangle lies within the circumradius of the other triangle.
 func (t1 *Triangle) IsDelaunayWith(t2 *Triangle) bool {
-	p := t2.getPointOpposite(t1)
+	p := t2.GetPointOpposite(t1)
 	if p == nil {
 		return true
 	}
@@ -249,23 +249,23 @@ func (t1 *Triangle) IsDelaunayWith(t2 *Triangle) bool {
 		c.X-p.X, c.Y-p.Y, c.X*c.X+c.Y*c.Y-lenP) >= 0
 }
 
-// getTriangleOpposite takes one of the vertices of this triangle and returns the triangle bordering the edge of the
+// GetTriangleOpposite takes one of the vertices of this triangle and returns the triangle bordering the edge of the
 // triangle that does not contain that point.
 // If p is not in t, returns nil. If t has no neighbouring triangle, returns nil.
-func (t *Triangle) getTriangleOpposite(p *Point) *Triangle {
+func (t *Triangle) GetTriangleOpposite(p *Point) *Triangle {
 	if t.Points[0] == p {
-		return t.getAdjacentTo(t.Points[1], t.Points[2])
+		return t.GetAdjacentTo(t.Points[1], t.Points[2])
 	} else if t.Points[1] == p {
-		return t.getAdjacentTo(t.Points[0], t.Points[2])
+		return t.GetAdjacentTo(t.Points[0], t.Points[2])
 	} else if t.Points[2] == p {
-		return t.getAdjacentTo(t.Points[0], t.Points[1])
+		return t.GetAdjacentTo(t.Points[0], t.Points[1])
 	}
 	return nil
 }
 
-// getPointOpposite takes a triangle, t2, that borders this triangle and returns the point in this triangle that
+// GetPointOpposite takes a triangle, t2, that borders this triangle and returns the point in this triangle that
 // does not form part of triangle t2.
-func (t1 *Triangle) getPointOpposite(t2 *Triangle) *Point {
+func (t1 *Triangle) GetPointOpposite(t2 *Triangle) *Point {
 	for _, p := range t1.Points {
 		found := false
 		for _, t := range p.Triangles {
@@ -281,8 +281,8 @@ func (t1 *Triangle) getPointOpposite(t2 *Triangle) *Point {
 	return nil
 }
 
-// getAdjacentTo takes two vertices from this triangle and returns the triangle adjoining this triangle along that edge.
-func (t *Triangle) getAdjacentTo(p1, p2 *Point) *Triangle {
+// GetAdjacentTo takes two vertices from this triangle and returns the triangle adjoining this triangle along that edge.
+func (t *Triangle) GetAdjacentTo(p1, p2 *Point) *Triangle {
 	for _, t1 := range p1.Triangles {
 		for _, t2 := range p2.Triangles {
 			if t1 == t2 && t1 != t {

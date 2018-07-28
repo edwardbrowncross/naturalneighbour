@@ -57,7 +57,7 @@ func (t *Triangulation) addPoint(p *Point, undoable bool) (Undo, error) {
 	copy(toCheck, p.Triangles)
 	for i := 0; i < len(toCheck); i++ {
 		t1 := toCheck[i]
-		t2 := t1.getTriangleOpposite(p)
+		t2 := t1.GetTriangleOpposite(p)
 		if t2 == nil {
 			continue
 		}

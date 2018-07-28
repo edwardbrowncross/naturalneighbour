@@ -1,8 +1,6 @@
 package voronoi
 
 import (
-	"sort"
-
 	"github.com/edwardbrowncross/naturalneighbour/delaunay"
 	"github.com/edwardbrowncross/naturalneighbour/geom"
 )
@@ -18,16 +16,27 @@ func NewRegion(p *delaunay.Point) Region {
 	verts := []Vertex{}
 	// Vertices are the circumcenters of the delaunay triangles surrounding the point.
 	// https://stackoverflow.com/questions/85275/how-do-i-derive-a-voronoi-diagram-given-its-point-set-and-its-delaunay-triangula#comment619809_85359
-	for _, t := range p.Triangles {
-		v := NewVertex(t.GetCircumcenter())
+	// Consecutive verts should be from neighbouring triangles.
+	t0 := p.Triangles[0]
+	curt := t0
+	curp := t0.Points[0]
+	if curp == p {
+		curp = t0.Points[1]
+	}
+	for true {
+		v := NewVertex(curt.GetCircumcenter())
 		verts = append(verts, v)
+		newt := curt.GetAdjacentTo(p, curp)
+		if newt == t0 || newt == nil {
+			break
+		}
+		curp = newt.GetPointOpposite(curt)
+		curt = newt
 	}
 	r := Region{
 		Center: p,
 		Verts:  verts,
 	}
-	// Sort vertices in clockwise orders (consecutive verts should be from neighbouring triangles).
-	sort.Sort(r)
 	return r
 }
 
@@ -41,16 +50,4 @@ func (r Region) GetArea() float64 {
 		sum += geom.GetArea(r.Center.X, r.Center.Y, v1.X, v1.Y, v2.X, v2.Y)
 	}
 	return sum
-}
-
-// Sorting logic.
-// Clockwise sort: https://stackoverflow.com/questions/6989100/sort-points-in-clockwise-order
-func (r Region) Len() int {
-	return len(r.Verts)
-}
-func (r Region) Swap(i, j int) {
-	r.Verts[i], r.Verts[j] = r.Verts[j], r.Verts[i]
-}
-func (r Region) Less(i, j int) bool {
-	return (r.Verts[i].X-r.Center.X)*(r.Verts[j].Y-r.Center.Y) < (r.Verts[j].X-r.Center.X)*(r.Verts[i].Y-r.Center.Y)
 }
