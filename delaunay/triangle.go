@@ -87,7 +87,10 @@ func (t *Triangle) Search(p *Point) (leaf *Triangle, err error) {
 	}
 	leaf = t
 	for len(leaf.Children) != 0 {
-		leaf, _ = leaf.getChildContaining(p)
+		leaf, err = leaf.getChildContaining(p)
+		if err != nil || leaf == nil {
+			return
+		}
 	}
 	return
 }
@@ -235,6 +238,9 @@ func (t1 *Triangle) UnflipWith(t2 *Triangle) error {
 // It does this by checking whether the opposing point of one triangle lies within the circumradius of the other triangle.
 func (t1 *Triangle) IsDelaunayWith(t2 *Triangle) bool {
 	p := t2.getPointOpposite(t1)
+	if p == nil {
+		return true
+	}
 	// http://www.cs.utah.edu/~csilva/courses/cpsc7960/pdf/boulos-DT.pdf (slide 7).
 	a, b, c := t1.getPoints()
 	lenP := p.X*p.X + p.Y*p.Y
