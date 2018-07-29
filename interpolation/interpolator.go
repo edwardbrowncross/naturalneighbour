@@ -7,13 +7,14 @@ import (
 
 // Interpolator provides natural neighbour interpolation within a set of points.
 type Interpolator struct {
-	t *delaunay.Triangulation
+	t         *delaunay.Triangulation
+	areaCache map[*delaunay.Point]float64
 }
 
 // New creates a new Interpolator using the given points.
 func New(points []*delaunay.Point) (*Interpolator, error) {
 	t, err := delaunay.NewTriangulation(points)
-	return &Interpolator{t: t}, err
+	return &Interpolator{t, map[*delaunay.Point]float64{}}, err
 }
 
 // Interpolate returns the interpolated value at the given x and y coordinates using natural neighbour interpolation.
@@ -36,8 +37,14 @@ func (i *Interpolator) Interpolate(x, y float64) (float64, error) {
 	undo()
 	// Calculate the area of the same points without the new point in the triangulation.
 	areasBefore := make([]float64, len(neighbours))
-	for i, n := range neighbours {
-		areasBefore[i] = voronoi.NewRegion(n).GetArea()
+	for idx, n := range neighbours {
+		if value, found := i.areaCache[n]; !found {
+			area := voronoi.NewRegion(n).GetArea()
+			i.areaCache[n] = area
+			areasBefore[idx] = area
+		} else {
+			areasBefore[idx] = value
+		}
 	}
 	// Take a weighted average of the values of the points the new test point was connected to.
 	// Weighting is the percentage of the test point's voronoi cell that was stolen from each neighbour point.
