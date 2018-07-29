@@ -30,7 +30,13 @@ func NewRegion(p *delaunay.Point) Region {
 		if newt == t0 || newt == nil {
 			break
 		}
-		curp = newt.GetPointOpposite(curt)
+		if newt.Points[0] != p && newt.Points[0] != curp {
+			curp = newt.Points[0]
+		} else if newt.Points[1] != p && newt.Points[1] != curp {
+			curp = newt.Points[1]
+		} else {
+			curp = newt.Points[2]
+		}
 		curt = newt
 	}
 	r := Region{

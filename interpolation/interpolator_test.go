@@ -38,6 +38,7 @@ var result float64
 
 func benchmarkInterpolation(n int, b *testing.B) {
 	b.StopTimer()
+	rand.Seed(0)
 	dataPoints := make([]*delaunay.Point, n)
 	dataPoints[0] = NewPoint(1, 1, 0)
 	dataPoints[1] = NewPoint(1, -1, 0)

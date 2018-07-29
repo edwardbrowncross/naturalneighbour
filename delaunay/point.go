@@ -27,12 +27,11 @@ func (p *Point) addTriangle(t *Triangle) {
 
 // removeTriangle removes a triangle from the point's triangle array.
 func (p *Point) removeTriangle(t *Triangle) error {
-	triangles := p.Triangles
-	lt := len(triangles) - 1
-	for i, tr := range triangles {
-		if tr == t {
-			triangles[lt], triangles[i] = triangles[i], triangles[lt]
-			p.Triangles = triangles[:lt]
+	lt := len(p.Triangles) - 1
+	for i := lt; i >= 0; i-- {
+		if p.Triangles[i] == t {
+			p.Triangles[i] = p.Triangles[lt]
+			p.Triangles = p.Triangles[:lt]
 			return nil
 		}
 	}

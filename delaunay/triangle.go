@@ -266,16 +266,16 @@ func (t *Triangle) GetTriangleOpposite(p *Point) *Triangle {
 // GetPointOpposite takes a triangle, t2, that borders this triangle and returns the point in this triangle that
 // does not form part of triangle t2.
 func (t1 *Triangle) GetPointOpposite(t2 *Triangle) *Point {
-	for _, p := range t1.Points {
+	for i := 0; i < 3; i++ {
 		found := false
-		for _, t := range p.Triangles {
-			if t == t2 {
+		for j := 0; j < 3; j++ {
+			if t1.Points[i] == t2.Points[j] {
 				found = true
 				break
 			}
 		}
 		if !found {
-			return p
+			return t1.Points[i]
 		}
 	}
 	return nil
@@ -284,8 +284,11 @@ func (t1 *Triangle) GetPointOpposite(t2 *Triangle) *Point {
 // GetAdjacentTo takes two vertices from this triangle and returns the triangle adjoining this triangle along that edge.
 func (t *Triangle) GetAdjacentTo(p1, p2 *Point) *Triangle {
 	for _, t1 := range p1.Triangles {
+		if t1 == t {
+			continue
+		}
 		for _, t2 := range p2.Triangles {
-			if t1 == t2 && t1 != t {
+			if t1 == t2 {
 				return t1
 			}
 		}
